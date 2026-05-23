@@ -95,7 +95,8 @@
             width: 100%;
             height: 0%; /* Controlado pelo JS */
             background: linear-gradient(to top, #ff7675, #d63031, #b32424);
-            transition: height 0.01s linear;
+            /* Ajustado para acompanhar o tempo do setInterval de forma suave */
+            transition: height 0.03s linear; 
         }
 
         /* Marcadores visuais das zonas de pontuação */
@@ -202,7 +203,7 @@
 
         const desafiosHot = [
             "Tire uma peça de roupa imediatamente! 🔞",
-            "Fiquem de conchinha sacana por 2 minutos 🔥",
+            "Fiquem de conchinha sacana por 2 minutes 🔥",
             "Escolha a posição que você mais gosta para mais tarde 🔞",
             "Uma massagem super provocante de 3 minutos 💆‍♀️"
         ];
@@ -222,7 +223,7 @@
         let intervaloFisica;
         
         // Controla a velocidade de oscilação da barra (quanto menor o número, mais rápido)
-        const velocidadeOscilacao = 6; 
+        const velocidadOscilacao = 15; 
 
         function iniciarJogo() {
             document.getElementById('tela-inicial').style.display = 'none';
@@ -273,14 +274,20 @@
 
             intervaloFisica = setInterval(() => {
                 if (subindo) {
-                    porcentagemAtual += 2; // Passos de subida
-                    if (porcentagemAtual >= 100) subindo = false;
+                    porcentagemAtual += 4; // Passos de subida mais visíveis
+                    if (porcentagemAtual >= 100) {
+                        porcentagemAtual = 100;
+                        subindo = false;
+                    }
                 } else {
-                    porcentagemAtual -= 2; // Passos de descida
-                    if (porcentagemAtual <= 0) subindo = true;
+                    porcentagemAtual -= 4; // Passos de descida mais visíveis
+                    if (porcentagemAtual <= 0) {
+                        porcentagemAtual = 0;
+                        subindo = true;
+                    }
                 }
                 barra.style.height = porcentagemAtual + '%';
-            }, velocidadOscilacao);
+            }, velocidadOscilacao); // Corrigido o nome da variável aqui!
         }
 
         // Escolhe o desafio ideal com base na porcentagem exata que o jogador parou

@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 10px; /* Reduzido de 20px para economizar espaço */
             box-sizing: border-box;
             overflow: hidden;
         }
@@ -21,16 +21,18 @@
         h1 {
             color: #d63031;
             text-align: center;
-            margin-bottom: 5px;
-            font-size: 26px;
+            margin-top: 5px;
+            margin-bottom: 2px; /* Margens bem enxutas */
+            font-size: 24px; /* Levemente menor para telas mobile */
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         p {
             color: #4a4a4a;
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 5px; /* Reduzido de 20px para não empurrar o jogo para baixo */
+            font-size: 14px;
         }
 
         #tela-inicial {
@@ -74,10 +76,10 @@
             justify-content: space-between;
         }
 
-        /* Área de lançamento do dado */
+        /* Área de lançamento do dado - Altura reduzida para dar espaço ao texto */
         .arena-dado {
             width: 100%;
-            height: 350px;
+            height: 260px; /* Reduzido de 350px para segurar o dado mais acima */
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -85,13 +87,13 @@
             perspective: 1000px;
             touch-action: none;
             user-select: none;
-            padding-bottom: 40px;
+            padding-bottom: 10px; /* Menos folga no fundo */
         }
 
         /* Container de Translação (Sobe e Desce) */
         .dado-wrapper {
             position: absolute;
-            bottom: 40px;
+            bottom: 10px;
             transition: transform 0s linear;
             cursor: grab;
         }
@@ -99,10 +101,10 @@
             cursor: grabbing;
         }
 
-        /* O Dado 3D Real */
+        /* O Dado 3D Real - Ajustado levemente para 90px */
         .dado {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             position: relative;
             transform-style: preserve-3d;
             transform: rotateX(-20deg) rotateY(25deg);
@@ -112,43 +114,43 @@
         /* Propriedades comuns de todas as faces */
         .face {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
             border: 3px solid #ffffff;
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 38px;
+            font-size: 34px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
             box-sizing: border-box;
             backface-visibility: visible;
         }
 
-        /* Posicionamento Espacial 3D das Faces */
-        .face-1 { transform: rotateY(0deg) translateZ(50px); }
-        .face-2 { transform: rotateY(90deg) translateZ(50px); }
-        .face-3 { transform: rotateY(180deg) translateZ(50px); }
-        .face-4 { transform: rotateY(-90deg) translateZ(50px); }
-        .face-5 { transform: rotateX(90deg) translateZ(50px); }
-        .face-6 { transform: rotateX(-90deg) translateZ(50px); }
+        /* Posicionamento Espacial 3D das Faces (metade do tamanho do dado: 45px) */
+        .face-1 { transform: rotateY(0deg) translateZ(45px); }
+        .face-2 { transform: rotateY(90deg) translateZ(45px); }
+        .face-3 { transform: rotateY(180deg) translateZ(45px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(45px); }
+        .face-5 { transform: rotateX(90deg) translateZ(45px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(45px); }
 
         /* Caixa de Exibição do Desafio Sorteado */
         #resultado {
-            margin-bottom: 20px;
-            min-height: 65px;
+            margin-bottom: 10px; /* Menor margem inferior */
+            min-height: 60px;
             background-color: white;
             border: 3px solid #ff7675;
             border-radius: 15px;
-            padding: 15px;
+            padding: 10px 15px;
             width: 90%;
             box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            font-size: 18px;
+            font-size: 16px; /* Ajuste leve no texto */
             font-weight: bold;
             color: #2d3436;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -199,7 +201,6 @@
     </div>
 
     <script>
-        // São 6 desafios fixos, mapeados diretamente para as 6 faces do dado
         const desafios = {
             1: "Tire uma peça de roupa 🔞",
             2: "Posição: Do jeitinho que você mais gosta 🔥",
@@ -209,7 +210,6 @@
             6: "Me faça uma massagem de 3 minutos 💆‍♂️"
         };
 
-        // Rotações CSS exatas para travar o dado perfeitamente em cada face no final
         const rotacoesFaces = {
             1: { x: 0, y: 0 },
             2: { x: 0, y: -90 },
@@ -251,12 +251,12 @@
         }
 
         function registrarEventos() {
-            const obterY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
+            const obtenerY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
 
             const iniciarArrasto = (e) => {
                 if (jogando) return;
                 estaArrastando = true;
-                yInicial = obterY(e);
+                yInicial = obtenerY(e);
                 tempoInicial = Date.now();
                 resultadoDiv.classList.remove('ganhou');
                 resultadoDiv.innerText = "Lançando... 🚀";
@@ -264,10 +264,9 @@
 
             const movendoArrasto = (e) => {
                 if (!estaArrastando || jogando) return;
-                const yAtual = obterY(e);
+                const yAtual = obtenerY(e);
                 const deslocamentoY = yInicial - yAtual;
 
-                // Move visualmente o dado de leve acompanhando o dedo antes de soltar
                 if (deslocamentoY > 0 && deslocamentoY < 60) {
                     dadoWrapper.style.transform = `translateY(${-deslocamentoY}px)`;
                 }
@@ -281,11 +280,9 @@
                 const deslocamentoTotal = yInicial - yFinal;
                 const tempoTotal = Date.now() - tempoInicial;
 
-                // Se o usuário arrastou para cima com velocidade suficiente
                 if (deslocamentoTotal > 30 && tempoTotal < 250) {
                     lancarDado(deslocamentoTotal / tempoTotal);
                 } else {
-                    // Reset elástico suave se o arrasto foi fraco ou inválido
                     dadoWrapper.style.transition = "transform 0.2s ease-out";
                     dadoWrapper.style.transform = "translateY(0px)";
                     resultadoDiv.innerText = "Arraste mais rápido para o alto! 🎲";
@@ -305,57 +302,46 @@
         function lancarDado(forca) {
             jogando = true;
             
-            // Escolhe a face vencedora secretamente no início do vôo
             const faceSorteada = Math.floor(Math.random() * 6) + 1;
             
-            // Calcula a altura do pulo baseado na força física do arrasto do dedo
-            const alturaPulo = Math.min(230, Math.max(140, forca * 120));
-            const tempoVoo = 800; // Tempo total da animação em milissegundos (subida + queda)
+            // Altura máxima do pulo reduzida para 170px para não estourar telas pequenas
+            const alturaPulo = Math.min(170, Math.max(110, forca * 100));
+            const tempoVoo = 800; 
 
-            // Configura os tempos e curvas dinâmicas de movimentação física (Parábola Bézier)
             dadoWrapper.style.transition = `transform ${tempoVoo}ms cubic-bezier(0.25, 1, 0.5, 1)`;
             dado.style.transition = `transform ${tempoVoo}ms cubic-bezier(0.2, 0.8, 0.4, 1)`;
 
-            // Executa a subida vertical
             dadoWrapper.style.transform = `translateY(${-alturaPulo}px)`;
 
-            // Rotação randômica intensa simulando o dado girando desordenadamente no ar
             const voltasX = (Math.floor(Math.random() * 4) + 3) * 360;
             const voltasY = (Math.floor(Math.random() * 4) + 3) * 360;
             const rotFinal = rotacoesFaces[faceSorteada];
 
             dado.style.transform = `rotateX(${voltasX + rotFinal.x}deg) rotateY(${voltasY + rotFinal.y}deg)`;
 
-            // Efeito sonoro repetitivo de giros rápidos simulado
             let somInterval = setInterval(() => {
                 somClique.currentTime = 0;
                 somClique.play().catch(() => {});
             }, 120);
 
-            // Metade do caminho do vôo: ativa a física de gravidade para o dado cair de volta
             setTimeout(() => {
                 dadoWrapper.style.transition = `transform ${tempoVoo / 2}ms cubic-bezier(0.55, 0.055, 0.675, 0.19)`;
                 dadoWrapper.style.transform = `translateY(0px)`;
             }, tempoVoo / 2);
 
-            // Fim da queda: o dado aterrissa na mesa do app
             setTimeout(() => {
                 clearInterval(somInterval);
                 
-                // Pequena batida sonora seca no impacto final
                 somClique.currentTime = 0;
                 somClique.play().catch(() => {});
 
-                // Mostra o resultado do desafio com efeito visual animado
                 resultadoDiv.innerText = desafios[faceSorteada];
                 resultadoDiv.classList.add('ganhou');
 
-                // Libera o dado para um próximo lançamento
                 jogando = false;
                 dadoWrapper.style.transition = "none";
                 dado.style.transition = "none";
 
-                // Reseta a rotação mantendo a face correta virada para a tela de forma estável
                 dado.style.transform = `rotateX(${rotFinal.x}deg) rotateY(${rotFinal.y}deg)`;
             }, tempoVoo);
         }

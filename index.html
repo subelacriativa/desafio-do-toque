@@ -95,7 +95,6 @@
             width: 100%;
             height: 0%; /* Controlado pelo JS */
             background: linear-gradient(to top, #ff7675, #d63031, #b32424);
-            /* Ajustado para acompanhar o tempo do setInterval de forma suave */
             transition: height 0.03s linear; 
         }
 
@@ -203,7 +202,7 @@
 
         const desafiosHot = [
             "Tire uma peça de roupa imediatamente! 🔞",
-            "Fiquem de conchinha sacana por 2 minutes 🔥",
+            "Fiquem de conchinha sacana por 2 minutos 🔥",
             "Escolha a posição que você mais gosta para mais tarde 🔞",
             "Uma massagem super provocante de 3 minutos 💆‍♀️"
         ];
@@ -222,7 +221,6 @@
         let subindo = true;
         let intervaloFisica;
         
-        // Controla a velocidade de oscilação da barra (quanto menor o número, mais rápido)
         const velocidadOscilacao = 15; 
 
         function iniciarJogo() {
@@ -242,30 +240,25 @@
             });
         }
 
-        // Alterna o botão entre "PARAR" e "TENTAR DE NOVO"
         function controlarJogo() {
-            // Vibração nativa no celular ao clicar (padrão de 100ms)
+            // Vibração nativa padrão de toque simples (100ms) ao interagir
             if (navigator.vibrate) {
                 navigator.vibrate(100);
             }
 
-            // Toca o som mecânico de clique
             somClique.currentTime = 0;
             somClique.play().catch(() => {});
 
             if (jogando) {
-                // Parar o jogo e computar resultado
                 jogando = false;
                 clearInterval(intervaloFisica);
                 btnAcao.innerText = "JOGAR DE NOVO";
                 exibirResultado(porcentagemAtual);
             } else {
-                // Reiniciar a oscilação da barra
                 resetarCicloBarra();
             }
         }
 
-        // Inicia ou reinicia o loop de animação da barra de energia
         function resetarCicloBarra() {
             jogando = true;
             resultadoDiv.classList.remove('ganhou');
@@ -274,52 +267,52 @@
 
             intervaloFisica = setInterval(() => {
                 if (subindo) {
-                    porcentagemAtual += 4; // Passos de subida mais visíveis
+                    porcentagemAtual += 4; 
                     if (porcentagemAtual >= 100) {
                         porcentagemAtual = 100;
                         subindo = false;
                     }
                 } else {
-                    porcentagemAtual -= 4; // Passos de descida mais visíveis
+                    porcentagemAtual -= 4; 
                     if (porcentagemAtual <= 0) {
                         porcentagemAtual = 0;
                         subindo = true;
                     }
                 }
                 barra.style.height = porcentagemAtual + '%';
-            }, velocidadOscilacao); // Corrigido o nome da variável aqui!
+            }, velocidadOscilacao);
         }
 
-        // Escolhe o desafio ideal com base na porcentagem exata que o jogador parou
         function exibirResultado(porcentagem) {
             let desafioSorteado = "";
             resultadoDiv.classList.add('ganhou');
 
             if (porcentagem <= 30) {
-                // Zona Fria
                 const indice = Math.floor(Math.random() * desafiosFrio.length);
                 desafioSorteado = `[FRIO - ${porcentagem}%] ${desafiosFrio[indice]}`;
             } else if (porcentagem > 30 && porcentagem <= 80) {
-                // Zona Morna
                 const indice = Math.floor(Math.random() * desafiosMorno.length);
                 desafioSorteado = `[MORNO - ${porcentagem}%] ${desafiosMorno[indice]}`;
             } else {
-                // Zona Hot (81% a 100%)
                 const indice = Math.floor(Math.random() * desafiosHot.length);
                 desafioSorteado = `[🔥 HOT! - ${porcentagem}%] ${desafiosHot[indice]}`;
                 
-                // Dispara os confetes com as cores românticas do layout
+                // Dispara os confetes
                 dispararConfetesEspeciais();
+
+                // NOVO: Sobrescreve a vibração simples com um padrão duplo mais marcante para a zona Hot
+                if (navigator.vibrate) {
+                    // Vibra por 300ms, pausa por 100ms, vibra por 300ms
+                    navigator.vibrate([300, 100, 300]);
+                }
             }
 
             resultadoDiv.innerText = desafioSorteado;
         }
 
-        // Função responsável pelo efeito visual do Canvas-Confetti
         function dispararConfetesEspeciais() {
             const coresConfeti = ['#ff7675', '#d63031', '#ff8a8a', '#ffffff'];
             
-            // Explosão da esquerda
             confetti({
                 particleCount: 50,
                 angle: 60,
@@ -328,7 +321,6 @@
                 colors: coresConfeti
             });
             
-            // Explosão da direita
             confetti({
                 particleCount: 50,
                 angle: 120,

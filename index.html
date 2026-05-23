@@ -98,7 +98,7 @@
             transition: height 0.03s linear; 
         }
 
-        /* Marcadores visuais das zonas de pontuação */
+        /* Modificado: Centralização vertical e horizontal dos textos dentro das zonas */
         .marcador-zona {
             position: absolute;
             left: 0;
@@ -109,8 +109,13 @@
             font-weight: bold;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
             box-sizing: border-box;
-            padding-left: 10px;
             pointer-events: none;
+            
+            /* Lógica de centralização */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         /* Caixa de Resultado do Desafio */
@@ -171,10 +176,10 @@
             <!-- Barra dinâmica -->
             <div id="barra-energia"></div>
 
-            <!-- Indicações de níveis na tela -->
-            <div class="marcador-zona" style="bottom: 81%; height: 19%; background-color: rgba(214, 48, 49, 0.15);">🔥 HOT (81-100%)</div>
-            <div class="marcador-zona" style="bottom: 31%; height: 50%; background-color: rgba(255, 118, 117, 0.1);">😏 MORNO (31-80%)</div>
-            <div class="marcador-zona" style="bottom: 0%; height: 31%;">❄️ FRIO (0-30%)</div>
+            <!-- Indicações de níveis na tela com textos centralizados na própria zona -->
+            <div class="marcador-zona" style="bottom: 81%; height: 19%; background-color: rgba(214, 48, 49, 0.25);">🔥 HOT<br>(81-100%)</div>
+            <div class="marcador-zona" style="bottom: 31%; height: 50%; background-color: rgba(255, 118, 117, 0.1);">😏 MORNO<br>(31-80%)</div>
+            <div class="marcador-zona" style="bottom: 0%; height: 31%;">❄️ FRIO<br>(0-30%)</div>
         </div>
 
         <div class="area-botoes">
@@ -241,7 +246,6 @@
         }
 
         function controlarJogo() {
-            // Vibração nativa padrão de toque simples (100ms) ao interagir
             if (navigator.vibrate) {
                 navigator.vibrate(100);
             }
@@ -297,12 +301,9 @@
                 const indice = Math.floor(Math.random() * desafiosHot.length);
                 desafioSorteado = `[🔥 HOT! - ${porcentagem}%] ${desafiosHot[indice]}`;
                 
-                // Dispara os confetes
                 dispararConfetesEspeciais();
 
-                // NOVO: Sobrescreve a vibração simples com um padrão duplo mais marcante para a zona Hot
                 if (navigator.vibrate) {
-                    // Vibra por 300ms, pausa por 100ms, vibra por 300ms
                     navigator.vibrate([300, 100, 300]);
                 }
             }

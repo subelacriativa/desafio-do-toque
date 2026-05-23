@@ -2,37 +2,65 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nosso Dado do Amor ❤️</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffe3e3 0%, #fbc2eb 100%);
-            min-height: 100vh;
+            height: 100vh; /* Altura cravada na tela do dispositivo */
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px; /* Reduzido de 20px para economizar espaço */
+            padding: 15px;
             box-sizing: border-box;
             overflow: hidden;
         }
 
+        /* Container do Topo para agrupar títulos e respostas */
+        .header-jogo {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
         h1 {
             color: #d63031;
-            text-align: center;
             margin-top: 5px;
-            margin-bottom: 2px; /* Margens bem enxutas */
-            font-size: 24px; /* Levemente menor para telas mobile */
+            margin-bottom: 2px;
+            font-size: 24px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         p {
             color: #4a4a4a;
-            text-align: center;
             margin-top: 0;
-            margin-bottom: 5px; /* Reduzido de 20px para não empurrar o jogo para baixo */
+            margin-bottom: 15px;
             font-size: 14px;
+        }
+
+        /* Caixa de Exibição do Desafio - AGORA NO TOPO */
+        #resultado {
+            width: 90%;
+            min-height: 65px;
+            background-color: white;
+            border: 3px solid #ff7675;
+            border-radius: 15px;
+            padding: 10px 15px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d3436;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            margin-bottom: 10px;
         }
 
         #tela-inicial {
@@ -62,38 +90,31 @@
             transition: transform 0.2s;
         }
 
-        .btn-principal:hover {
-            transform: scale(1.05);
-        }
-
         #conteudo-jogo {
             display: none; 
             width: 100%;
             max-width: 420px;
             flex-direction: column;
             align-items: center;
-            flex-grow: 1;
-            justify-content: space-between;
+            height: 100%;
         }
 
-        /* Área de lançamento do dado - Altura reduzida para dar espaço ao texto */
+        /* Área do dado centralizada no espaço restante */
         .arena-dado {
             width: 100%;
-            height: 260px; /* Reduzido de 350px para segurar o dado mais acima */
+            flex-grow: 1; /* Ocupa todo o resto da tela de forma dinâmica */
             display: flex;
-            align-items: flex-end;
+            align-items: center; /* Centraliza o dado na vertical */
             justify-content: center;
             position: relative;
             perspective: 1000px;
             touch-action: none;
             user-select: none;
-            padding-bottom: 10px; /* Menos folga no fundo */
         }
 
         /* Container de Translação (Sobe e Desce) */
         .dado-wrapper {
             position: absolute;
-            bottom: 10px;
             transition: transform 0s linear;
             cursor: grab;
         }
@@ -101,7 +122,7 @@
             cursor: grabbing;
         }
 
-        /* O Dado 3D Real - Ajustado levemente para 90px */
+        /* O Dado 3D Real */
         .dado {
             width: 90px;
             height: 90px;
@@ -128,34 +149,13 @@
             backface-visibility: visible;
         }
 
-        /* Posicionamento Espacial 3D das Faces (metade do tamanho do dado: 45px) */
+        /* Posicionamento Espacial 3D das Faces */
         .face-1 { transform: rotateY(0deg) translateZ(45px); }
         .face-2 { transform: rotateY(90deg) translateZ(45px); }
         .face-3 { transform: rotateY(180deg) translateZ(45px); }
         .face-4 { transform: rotateY(-90deg) translateZ(45px); }
         .face-5 { transform: rotateX(90deg) translateZ(45px); }
         .face-6 { transform: rotateX(-90deg) translateZ(45px); }
-
-        /* Caixa de Exibição do Desafio Sorteado */
-        #resultado {
-            margin-bottom: 10px; /* Menor margem inferior */
-            min-height: 60px;
-            background-color: white;
-            border: 3px solid #ff7675;
-            border-radius: 15px;
-            padding: 10px 15px;
-            width: 90%;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 16px; /* Ajuste leve no texto */
-            font-weight: bold;
-            color: #2d3436;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-        }
 
         .ganhou {
             transform: scale(1.05);
@@ -179,9 +179,10 @@
     </div>
 
     <div id="conteudo-jogo">
-        <div>
+        <div class="header-jogo">
             <h1>Dado do Amor ❤️</h1>
-            <p>Arraste o dado de baixo para cima rápido para jogá-lo!</p>
+            <p>Arraste o dado rápido para cima para jogá-lo!</p>
+            <div id="resultado">Jogue o dado para começar... 🎲</div>
         </div>
         
         <div class="arena-dado" id="arena">
@@ -196,8 +197,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="resultado">Jogue o dado para cima para começar... 🎲</div>
     </div>
 
     <script>
@@ -251,12 +250,12 @@
         }
 
         function registrarEventos() {
-            const obtenerY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
+            const obterY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
 
             const iniciarArrasto = (e) => {
                 if (jogando) return;
                 estaArrastando = true;
-                yInicial = obtenerY(e);
+                yInicial = obterY(e);
                 tempoInicial = Date.now();
                 resultadoDiv.classList.remove('ganhou');
                 resultadoDiv.innerText = "Lançando... 🚀";
@@ -264,7 +263,7 @@
 
             const movendoArrasto = (e) => {
                 if (!estaArrastando || jogando) return;
-                const yAtual = obtenerY(e);
+                const yAtual = obterY(e);
                 const deslocamentoY = yInicial - yAtual;
 
                 if (deslocamentoY > 0 && deslocamentoY < 60) {
@@ -304,8 +303,8 @@
             
             const faceSorteada = Math.floor(Math.random() * 6) + 1;
             
-            // Altura máxima do pulo reduzida para 170px para não estourar telas pequenas
-            const alturaPulo = Math.min(170, Math.max(110, forca * 100));
+            // Força o pulo para cima partindo do novo centro da tela
+            const alturaPulo = Math.min(150, Math.max(90, forca * 90));
             const tempoVoo = 800; 
 
             dadoWrapper.style.transition = `transform ${tempoVoo}ms cubic-bezier(0.25, 1, 0.5, 1)`;

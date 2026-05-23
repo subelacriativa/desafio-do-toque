@@ -2,65 +2,37 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nosso Dado do Amor ❤️</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio do Toque ❤️</title>
+    <!-- Biblioteca Canvas-Confetti para o efeito especial da zona Hot -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffe3e3 0%, #fbc2eb 100%);
-            height: 100vh; /* Altura cravada na tela do dispositivo */
+            min-height: 100vh;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px;
+            padding: 20px;
             box-sizing: border-box;
-            overflow: hidden;
-        }
-
-        /* Container do Topo para agrupar títulos e respostas */
-        .header-jogo {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            overflow-x: hidden;
         }
 
         h1 {
             color: #d63031;
-            margin-top: 5px;
-            margin-bottom: 2px;
-            font-size: 24px;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 26px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         p {
             color: #4a4a4a;
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        /* Caixa de Exibição do Desafio - AGORA NO TOPO */
-        #resultado {
-            width: 90%;
-            min-height: 65px;
-            background-color: white;
-            border: 3px solid #ff7675;
-            border-radius: 15px;
-            padding: 10px 15px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
+            margin-bottom: 20px;
             font-size: 16px;
-            font-weight: bold;
-            color: #2d3436;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-            margin-bottom: 10px;
         }
 
         #tela-inicial {
@@ -90,72 +62,77 @@
             transition: transform 0.2s;
         }
 
+        .btn-principal:hover {
+            transform: scale(1.05);
+        }
+
         #conteudo-jogo {
             display: none; 
             width: 100%;
             max-width: 420px;
             flex-direction: column;
             align-items: center;
-            height: 100%;
+            position: relative;
         }
 
-        /* Área do dado centralizada no espaço restante */
-        .arena-dado {
-            width: 100%;
-            flex-grow: 1; /* Ocupa todo o resto da tela de forma dinâmica */
+        /* Container do Termômetro Vertical */
+        .termometro-container {
+            position: relative;
+            width: 90px;
+            height: 340px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 4px solid #ff7675;
+            border-radius: 50px;
+            margin: 20px auto;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
             display: flex;
-            align-items: center; /* Centraliza o dado na vertical */
-            justify-content: center;
-            position: relative;
-            perspective: 1000px;
-            touch-action: none;
-            user-select: none;
+            align-items: flex-end; /* Garante que a barra suba de baixo para cima */
         }
 
-        /* Container de Translação (Sobe e Desce) */
-        .dado-wrapper {
+        /* Barra interna que oscila */
+        #barra-energia {
+            width: 100%;
+            height: 0%; /* Controlado pelo JS */
+            background: linear-gradient(to top, #ff7675, #d63031, #b32424);
+            transition: height 0.01s linear;
+        }
+
+        /* Marcadores visuais das zonas de pontuação */
+        .marcador-zona {
             position: absolute;
-            transition: transform 0s linear;
-            cursor: grab;
-        }
-        .dado-wrapper:active {
-            cursor: grabbing;
-        }
-
-        /* O Dado 3D Real */
-        .dado {
-            width: 90px;
-            height: 90px;
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateX(-20deg) rotateY(25deg);
-            transition: transform 0s linear;
+            left: 0;
+            width: 100%;
+            border-top: 2px dashed rgba(255, 255, 255, 0.6);
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            box-sizing: border-box;
+            padding-left: 10px;
+            pointer-events: none;
         }
 
-        /* Propriedades comuns de todas as faces */
-        .face {
-            position: absolute;
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
-            border: 3px solid #ffffff;
+        /* Caixa de Resultado do Desafio */
+        #resultado {
+            margin-top: 25px;
+            min-height: 60px;
+            background-color: white;
+            border: 3px solid #ff7675;
             border-radius: 15px;
+            padding: 15px;
+            width: 85%;
+            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 34px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
-            box-sizing: border-box;
-            backface-visibility: visible;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3436;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
         }
-
-        /* Posicionamento Espacial 3D das Faces */
-        .face-1 { transform: rotateY(0deg) translateZ(45px); }
-        .face-2 { transform: rotateY(90deg) translateZ(45px); }
-        .face-3 { transform: rotateY(180deg) translateZ(45px); }
-        .face-4 { transform: rotateY(-90deg) translateZ(45px); }
-        .face-5 { transform: rotateX(90deg) translateZ(45px); }
-        .face-6 { transform: rotateX(-90deg) translateZ(45px); }
 
         .ganhou {
             transform: scale(1.05);
@@ -166,6 +143,14 @@
             from { border-color: #ff7675; }
             to { border-color: #d63031; box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3); }
         }
+
+        /* Espaço para o botão de ação */
+        .area-botoes {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -174,53 +159,56 @@
     <audio id="som-clique" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav"></audio>
 
     <div id="tela-inicial">
-        <h1 style="margin-bottom: 25px;">Prontos para jogar o dado? ❤️</h1>
+        <h1 style="margin-bottom: 25px;">Prontos para o teste de reflexo? ❤️</h1>
         <button class="btn-principal" onclick="iniciarJogo()">Começar</button>
     </div>
 
     <div id="conteudo-jogo">
-        <div class="header-jogo">
-            <h1>Dado do Amor ❤️</h1>
-            <p>Arraste o dado rápido para cima para jogá-lo!</p>
-            <div id="resultado">Jogue o dado para começar... 🎲</div>
-        </div>
+        <h1>Desafio do Toque ❤️</h1>
+        <p>Aperte PARAR no momento certo para subir a temperatura!</p>
         
-        <div class="arena-dado" id="arena">
-            <div class="dado-wrapper" id="dadoWrapper">
-                <div class="dado" id="dado">
-                    <div class="face face-1">❤️</div>
-                    <div class="face face-2">🔥</div>
-                    <div class="face face-3">💋</div>
-                    <div class="face face-4">🤫</div>
-                    <div class="face face-5">🥂</div>
-                    <div class="face face-6">💆‍♂️</div>
-                </div>
-            </div>
+        <div class="termometro-container">
+            <!-- Barra dinâmica -->
+            <div id="barra-energia"></div>
+
+            <!-- Indicações de níveis na tela -->
+            <div class="marcador-zona" style="bottom: 81%; height: 19%; background-color: rgba(214, 48, 49, 0.15);">🔥 HOT (81-100%)</div>
+            <div class="marcador-zona" style="bottom: 31%; height: 50%; background-color: rgba(255, 118, 117, 0.1);">😏 MORNO (31-80%)</div>
+            <div class="marcador-zona" style="bottom: 0%; height: 31%;">❄️ FRIO (0-30%)</div>
         </div>
+
+        <div class="area-botoes">
+            <button id="btn-acao" class="btn-principal" onclick="controlarJogo()">PARAR</button>
+        </div>
+
+        <div id="resultado">Clique em PARAR para descobrir o seu destino... 🔥</div>
     </div>
 
     <script>
-        const desafios = {
-            1: "Tire uma peça de roupa 🔞",
-            2: "Posição: Do jeitinho que você mais gosta 🔥",
-            3: "Dê um beijo de cinema de 30 segundos 💋",
-            4: "Fique sem falar por 1 minuto enquanto ganha carinho 🤫",
-            5: "Tome um gole da sua bebida 🥂",
-            6: "Me faça uma massagem de 3 minutos 💆‍♂️"
-        };
+        // Bancos de dados de desafios categorizados por temperatura
+        const desafiosFrio = [
+            "Dê um abraço apertado de 30 segundos 🤗",
+            "Faça um carinho leve no rosto do seu amor 💖",
+            "Beijo na testa cheio de carinho 🥺",
+            "Massagem rápida nos ombros (1 min) 💆‍♂️"
+        ];
 
-        const rotacoesFaces = {
-            1: { x: 0, y: 0 },
-            2: { x: 0, y: -90 },
-            3: { x: 0, y: 180 },
-            4: { x: 0, y: 90 },
-            5: { x: -90, y: 0 },
-            6: { x: 90, y: 0 }
-        };
+        const desafiosMorno = [
+            "Dê um beijo de cinema caprichado (30s) 💋",
+            "Sussurre um desejo secreto no ouvido 💬",
+            "Tome um gole da sua bebida preferida 🥂",
+            "Uma lambida provocante no pescoço 😉"
+        ];
 
-        const dado = document.getElementById('dado');
-        const dadoWrapper = document.getElementById('dadoWrapper');
-        const arena = document.getElementById('arena');
+        const desafiosHot = [
+            "Tire uma peça de roupa imediatamente! 🔞",
+            "Fiquem de conchinha sacana por 2 minutos 🔥",
+            "Escolha a posição que você mais gosta para mais tarde 🔞",
+            "Uma massagem super provocante de 3 minutos 💆‍♀️"
+        ];
+
+        const barra = document.getElementById('barra-energia');
+        const btnAcao = document.getElementById('btn-acao');
         const resultadoDiv = document.getElementById('resultado');
         const musicaFundo = document.getElementById('musica-fundo');
         const somClique = document.getElementById('som-clique');
@@ -228,16 +216,20 @@
         musicaFundo.volume = 0.3;
         somClique.volume = 0.6;
 
-        let estaArrastando = false;
-        let yInicial = 0;
-        let tempoInicial = 0;
         let jogando = false;
+        let porcentagemAtual = 0;
+        let subindo = true;
+        let intervaloFisica;
+        
+        // Controla a velocidade de oscilação da barra (quanto menor o número, mais rápido)
+        const velocidadeOscilacao = 6; 
 
         function iniciarJogo() {
             document.getElementById('tela-inicial').style.display = 'none';
             document.getElementById('conteudo-jogo').style.display = 'flex';
+            
             tocarMusica();
-            registrarEventos();
+            resetarCicloBarra();
         }
 
         function tocarMusica() {
@@ -249,100 +241,94 @@
             });
         }
 
-        function registrarEventos() {
-            const obterY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
+        // Alterna o botão entre "PARAR" e "TENTAR DE NOVO"
+        function controlarJogo() {
+            // Vibração nativa no celular ao clicar (padrão de 100ms)
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
 
-            const iniciarArrasto = (e) => {
-                if (jogando) return;
-                estaArrastando = true;
-                yInicial = obterY(e);
-                tempoInicial = Date.now();
-                resultadoDiv.classList.remove('ganhou');
-                resultadoDiv.innerText = "Lançando... 🚀";
-            };
+            // Toca o som mecânico de clique
+            somClique.currentTime = 0;
+            somClique.play().catch(() => {});
 
-            const movendoArrasto = (e) => {
-                if (!estaArrastando || jogando) return;
-                const yAtual = obterY(e);
-                const deslocamentoY = yInicial - yAtual;
-
-                if (deslocamentoY > 0 && deslocamentoY < 60) {
-                    dadoWrapper.style.transform = `translateY(${-deslocamentoY}px)`;
-                }
-            };
-
-            const finalizarArrasto = (e) => {
-                if (!estaArrastando || jogando) return;
-                estaArrastando = false;
-
-                const yFinal = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-                const deslocamentoTotal = yInicial - yFinal;
-                const tempoTotal = Date.now() - tempoInicial;
-
-                if (deslocamentoTotal > 30 && tempoTotal < 250) {
-                    lancarDado(deslocamentoTotal / tempoTotal);
-                } else {
-                    dadoWrapper.style.transition = "transform 0.2s ease-out";
-                    dadoWrapper.style.transform = "translateY(0px)";
-                    resultadoDiv.innerText = "Arraste mais rápido para o alto! 🎲";
-                    setTimeout(() => { dadoWrapper.style.transition = "none"; }, 200);
-                }
-            };
-
-            arena.addEventListener('mousedown', iniciarArrasto);
-            window.addEventListener('mousemove', movendoArrasto);
-            window.addEventListener('mouseup', finalizarArrasto);
-
-            arena.addEventListener('touchstart', iniciarArrasto, { passive: true });
-            arena.addEventListener('touchmove', movendoArrasto, { passive: true });
-            window.addEventListener('touchend', finalizarArrasto);
+            if (jogando) {
+                // Parar o jogo e computar resultado
+                jogando = false;
+                clearInterval(intervaloFisica);
+                btnAcao.innerText = "JOGAR DE NOVO";
+                exibirResultado(porcentagemAtual);
+            } else {
+                // Reiniciar a oscilação da barra
+                resetarCicloBarra();
+            }
         }
 
-        function lancarDado(forca) {
+        // Inicia ou reinicia o loop de animação da barra de energia
+        function resetarCicloBarra() {
             jogando = true;
-            
-            const faceSorteada = Math.floor(Math.random() * 6) + 1;
-            
-            // Força o pulo para cima partindo do novo centro da tela
-            const alturaPulo = Math.min(150, Math.max(90, forca * 90));
-            const tempoVoo = 800; 
+            resultadoDiv.classList.remove('ganhou');
+            resultadoDiv.innerText = "Calculando temperatura... 🔥";
+            btnAcao.innerText = "PARAR";
 
-            dadoWrapper.style.transition = `transform ${tempoVoo}ms cubic-bezier(0.25, 1, 0.5, 1)`;
-            dado.style.transition = `transform ${tempoVoo}ms cubic-bezier(0.2, 0.8, 0.4, 1)`;
+            intervaloFisica = setInterval(() => {
+                if (subindo) {
+                    porcentagemAtual += 2; // Passos de subida
+                    if (porcentagemAtual >= 100) subindo = false;
+                } else {
+                    porcentagemAtual -= 2; // Passos de descida
+                    if (porcentagemAtual <= 0) subindo = true;
+                }
+                barra.style.height = porcentagemAtual + '%';
+            }, velocidadOscilacao);
+        }
 
-            dadoWrapper.style.transform = `translateY(${-alturaPulo}px)`;
+        // Escolhe o desafio ideal com base na porcentagem exata que o jogador parou
+        function exibirResultado(porcentagem) {
+            let desafioSorteado = "";
+            resultadoDiv.classList.add('ganhou');
 
-            const voltasX = (Math.floor(Math.random() * 4) + 3) * 360;
-            const voltasY = (Math.floor(Math.random() * 4) + 3) * 360;
-            const rotFinal = rotacoesFaces[faceSorteada];
-
-            dado.style.transform = `rotateX(${voltasX + rotFinal.x}deg) rotateY(${voltasY + rotFinal.y}deg)`;
-
-            let somInterval = setInterval(() => {
-                somClique.currentTime = 0;
-                somClique.play().catch(() => {});
-            }, 120);
-
-            setTimeout(() => {
-                dadoWrapper.style.transition = `transform ${tempoVoo / 2}ms cubic-bezier(0.55, 0.055, 0.675, 0.19)`;
-                dadoWrapper.style.transform = `translateY(0px)`;
-            }, tempoVoo / 2);
-
-            setTimeout(() => {
-                clearInterval(somInterval);
+            if (porcentagem <= 30) {
+                // Zona Fria
+                const indice = Math.floor(Math.random() * desafiosFrio.length);
+                desafioSorteado = `[FRIO - ${porcentagem}%] ${desafiosFrio[indice]}`;
+            } else if (porcentagem > 30 && porcentagem <= 80) {
+                // Zona Morna
+                const indice = Math.floor(Math.random() * desafiosMorno.length);
+                desafioSorteado = `[MORNO - ${porcentagem}%] ${desafiosMorno[indice]}`;
+            } else {
+                // Zona Hot (81% a 100%)
+                const indice = Math.floor(Math.random() * desafiosHot.length);
+                desafioSorteado = `[🔥 HOT! - ${porcentagem}%] ${desafiosHot[indice]}`;
                 
-                somClique.currentTime = 0;
-                somClique.play().catch(() => {});
+                // Dispara os confetes com as cores românticas do layout
+                dispararConfetesEspeciais();
+            }
 
-                resultadoDiv.innerText = desafios[faceSorteada];
-                resultadoDiv.classList.add('ganhou');
+            resultadoDiv.innerText = desafioSorteado;
+        }
 
-                jogando = false;
-                dadoWrapper.style.transition = "none";
-                dado.style.transition = "none";
-
-                dado.style.transform = `rotateX(${rotFinal.x}deg) rotateY(${rotFinal.y}deg)`;
-            }, tempoVoo);
+        // Função responsável pelo efeito visual do Canvas-Confetti
+        function dispararConfetesEspeciais() {
+            const coresConfeti = ['#ff7675', '#d63031', '#ff8a8a', '#ffffff'];
+            
+            // Explosão da esquerda
+            confetti({
+                particleCount: 50,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0, y: 0.8 },
+                colors: coresConfeti
+            });
+            
+            // Explosão da direita
+            confetti({
+                particleCount: 50,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1, y: 0.8 },
+                colors: coresConfeti
+            });
         }
     </script>
 </body>
